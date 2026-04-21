@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Cache directory for scanned images and generated PDFs -->
+    <cache-path name="docscanner_cache" path="docscanner_output/" />
+    <!-- External files if needed for sharing -->
+    <external-files-path name="docscanner_external" path="Documents/" />
+</paths>

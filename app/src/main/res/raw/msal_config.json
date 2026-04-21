@@ -1,0 +1,17 @@
+{
+  "client_id": "REPLACE_WITH_YOUR_AZURE_CLIENT_ID",
+  "authorization_user_agent": "DEFAULT",
+  "redirect_uri": "msauth://com.nabla.docscan/REPLACE_WITH_YOUR_SIGNATURE_HASH",
+  "broker_redirect_uri_registered": false,
+  "account_mode": "SINGLE",
+  "authorities": [
+    {
+      "type": "AAD",
+      "audience": {
+        "type": "PersonalMicrosoftAccount",
+        "tenant_id": "consumers"
+      },
+      "default": true
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".ui.scan.ScanActivity">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/app_name"
+        app:titleTextColor="@android:color/white">
+
+        <ImageButton
+            android:id="@+id/btn_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_settings"
+            android:padding="12dp"
+            android:src="@drawable/ic_settings"
+            android:tint="@android:color/white" />
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <!-- Status card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_page_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_no_pages"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                android:textColor="@color/colorPrimary" />
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text=""
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="@style/Widget.Material3.LinearProgressIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_upload_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text=""
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Main scan button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_scan"
+        style="@style/Widget.Material3.Button.Icon"
+        android:layout_width="0dp"
+        android:layout_height="72dp"
+        android:layout_margin="16dp"
+        android:text="@string/action_scan"
+        android:textSize="18sp"
+        app:icon="@drawable/ic_camera"
+        app:iconGravity="start"
+        app:layout_constraintBottom_toTopOf="@id/til_file_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_status"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <!-- File name input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_file_name"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        android:hint="File name (e.g. scan_2026-04-20)"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/btn_start_over"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_file_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Start Over button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_start_over"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="@string/action_start_over"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/action_row"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Action row -->
+    <LinearLayout
+        android:id="@+id/action_row"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="24dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_review"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="@string/action_review"
+            app:icon="@drawable/ic_grid" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_finished"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="@string/action_finished"
+            app:icon="@drawable/ic_check" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

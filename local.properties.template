@@ -1,0 +1,15 @@
+# local.properties.template
+# Copy this file to local.properties and fill in your values.
+# NEVER commit local.properties to git.
+
+# Android SDK location (set automatically by Android Studio)
+sdk.dir=/path/to/Android/sdk
+
+# Microsoft Azure AD App Registration
+# Create your app at: https://portal.azure.com > Azure Active Directory > App registrations
+msal.clientId=YOUR_AZURE_APP_CLIENT_ID_HERE
+
+# OneDrive folder ID (optional — defaults to root)
+# Get folder ID from: https://graph.microsoft.com/v1.0/me/drive/root/children
+# Or leave as "root" to upload to OneDrive root
+onedrive.folderId=root
