@@ -13,3 +13,6 @@ local.properties
 *.jks
 *.apk
 *.aab
+
+# MSAL config has real client_id — use msal_config.json.template
+app/src/main/res/raw/msal_config.json

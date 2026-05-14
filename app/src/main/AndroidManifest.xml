@@ -62,7 +62,7 @@
                 -->
                 <data
                     android:host="com.nabla.docscan"
-                    android:path="/REPLACE_WITH_YOUR_SIGNATURE_HASH"
+                    android:path="/3kezWOFkN+leRVL/ddB4wxeCZnM="
                     android:scheme="msauth" />
             </intent-filter>
         </activity>

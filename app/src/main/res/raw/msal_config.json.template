@@ -1,7 +1,7 @@
 {
-  "client_id": "REPLACE_WITH_YOUR_AZURE_CLIENT_ID",
+  "client_id": "YOUR_CLIENT_ID_HERE",
   "authorization_user_agent": "DEFAULT",
-  "redirect_uri": "msauth://com.nabla.docscan/REPLACE_WITH_YOUR_SIGNATURE_HASH",
+  "redirect_uri": "msauth://com.nabla.docscan/YOUR_SIGNATURE_HASH_URL_ENCODED",
   "broker_redirect_uri_registered": false,
   "account_mode": "SINGLE",
   "authorities": [
@@ -15,3 +15,4 @@
     }
   ]
 }
+
