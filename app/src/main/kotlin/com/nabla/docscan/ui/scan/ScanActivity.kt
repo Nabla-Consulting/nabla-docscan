@@ -96,7 +96,7 @@ class ScanActivity : AppCompatActivity() {
 
     private fun setupScanner() {
         val options = GmsDocumentScannerOptions.Builder()
-            .setScannerMode(GmsDocumentScannerOptions.SCANNER_MODE_FULL)
+            .setScannerMode(GmsDocumentScannerOptions.SCANNER_MODE_BASE_WITH_FILTER)  // was SCANNER_MODE_FULL
             .setGalleryImportAllowed(false)   // Camera-only workflow
             .setPageLimit(50)                  // Up to 50 pages per session
             .setResultFormats(
@@ -106,7 +106,7 @@ class ScanActivity : AppCompatActivity() {
             .build()
 
         documentScanner = GmsDocumentScanning.getClient(options)
-        Log.d(TAG, "ML Kit Document Scanner initialized")
+        Log.d(TAG, "ML Kit Document Scanner initialized (BASE_WITH_FILTER mode)")
     }
 
     private fun setupObservers() {

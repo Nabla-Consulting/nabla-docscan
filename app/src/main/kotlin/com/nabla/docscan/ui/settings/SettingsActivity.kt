@@ -60,9 +60,8 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         viewModel.folderList.observe(this) { folders ->
-            if (folders.isNotEmpty()) {
-                showFolderPickerDialog(folders)
-            }
+            // Always show dialog on update (handles both initial load and subfolder navigation)
+            showFolderPickerDialog(folders)
         }
 
         viewModel.errorMessage.observe(this) { message ->
@@ -109,14 +108,33 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun showFolderPickerDialog(folders: List<Pair<String, String>>) {
-        val names = folders.map { it.second }.toTypedArray()
+        // Build item list: optionally prepend ".." if inside a subfolder
+        val items = mutableListOf<String>()
+        if (!viewModel.isAtRoot()) items.add("↑ ..")
+        items.addAll(folders.map { "📁  ${it.first}" })  // first = name
+
         AlertDialog.Builder(this)
-            .setTitle(R.string.dialog_select_folder_title)
-            .setItems(names) { _, which ->
-                val selected = folders[which]
-                viewModel.selectFolder(selected.first, selected.second)
+            .setTitle(viewModel.currentFolderPath.value ?: "OneDrive")
+            .setItems(items.toTypedArray()) { dialogRef, which ->
+                dialogRef.dismiss()
+                val adjustedIndex = which - (if (!viewModel.isAtRoot()) 1 else 0)
+                if (!viewModel.isAtRoot() && which == 0) {
+                    // Navigate up
+                    viewModel.navigateUp(this)
+                } else {
+                    val selected = folders[adjustedIndex]
+                    // Navigate into subfolder — observer shows new dialog when folderList updates
+                    // selected.first = name, selected.second = id
+                    viewModel.navigateIntoFolder(selected.second, selected.first, this)
+                }
             }
-            .setNegativeButton(android.R.string.cancel, null)
+            .setNeutralButton("✓ Select this folder") { _, _ ->
+                viewModel.selectCurrentFolder()
+                Toast.makeText(this, "Folder saved", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                viewModel.resetFolderNav()
+            }
             .show()
     }
 

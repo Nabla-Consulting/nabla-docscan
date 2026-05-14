@@ -37,6 +37,13 @@ class SettingsViewModel @Inject constructor(
     private val _folderList = MutableLiveData<List<Pair<String, String>>>()
     val folderList: LiveData<List<Pair<String, String>>> = _folderList
 
+    // Navigation stack: List<Pair<folderId, folderName>>
+    private val folderStack = mutableListOf<Pair<String, String>>()
+
+    // Current path string for display (e.g. "OneDrive / Documents / Scans")
+    private val _currentFolderPath = MutableLiveData("OneDrive")
+    val currentFolderPath: LiveData<String> = _currentFolderPath
+
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
@@ -93,11 +100,44 @@ class SettingsViewModel @Inject constructor(
             _isLoading.value = true
             val result = oneDriveRepository.listFolders(activity, parentId)
             result.fold(
-                onSuccess = { folders -> _folderList.value = folders },
+                onSuccess = { folders ->
+                    // Sort alphabetically by name (first in pair)
+                    _folderList.value = folders.sortedBy { it.first.lowercase() }
+                },
                 onFailure = { e -> _errorMessage.value = "Could not load folders: ${e.message}" }
             )
             _isLoading.value = false
         }
+    }
+
+    fun navigateIntoFolder(folderId: String, folderName: String, activity: Activity) {
+        folderStack.add(folderId to folderName)
+        _currentFolderPath.value = "OneDrive / " + folderStack.joinToString(" / ") { it.second }
+        loadFolders(activity, parentId = folderId)
+    }
+
+    fun navigateUp(activity: Activity) {
+        if (folderStack.isNotEmpty()) folderStack.removeLast()
+        _currentFolderPath.value = if (folderStack.isEmpty()) "OneDrive"
+            else "OneDrive / " + folderStack.joinToString(" / ") { it.second }
+        val parentId = folderStack.lastOrNull()?.first ?: "root"
+        loadFolders(activity, parentId = parentId)
+    }
+
+    fun isAtRoot() = folderStack.isEmpty()
+
+    fun selectCurrentFolder() {
+        val folderId = folderStack.lastOrNull()?.first ?: "root"
+        val folderPath = if (folderStack.isEmpty()) "/"
+            else "/" + folderStack.joinToString("/") { it.second }
+        selectFolder(folderId, folderPath)
+        folderStack.clear()
+        _currentFolderPath.value = "OneDrive"
+    }
+
+    fun resetFolderNav() {
+        folderStack.clear()
+        _currentFolderPath.value = "OneDrive"
     }
 
     fun selectFolder(folderId: String, folderPath: String) {

@@ -366,11 +366,11 @@ class OneDriveRepository @Inject constructor(
 
             val json = JSONObject(response.body?.string() ?: "{}")
             val items = json.getJSONArray("value")
-            val folders = mutableListOf<Pair<String, String>>() // id to name
+            val folders = mutableListOf<Pair<String, String>>() // name to id
 
             for (i in 0 until items.length()) {
                 val item = items.getJSONObject(i)
-                folders.add(Pair(item.getString("id"), item.getString("name")))
+                folders.add(Pair(item.getString("name"), item.getString("id")))
             }
 
             Result.success(folders)
