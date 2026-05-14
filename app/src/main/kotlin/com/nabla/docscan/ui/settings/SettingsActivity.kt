@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.nabla.docscan.BuildConfig
 import com.nabla.docscan.R
 import com.nabla.docscan.databinding.ActivitySettingsBinding
 import com.nabla.docscan.viewmodel.SettingsViewModel
@@ -105,6 +106,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun loadCurrentSettings() {
         binding.switchOcr.isChecked = viewModel.isOcrEnabled()
+        binding.tvVersion.text = "v${BuildConfig.VERSION_NAME} (build ${BuildConfig.VERSION_CODE})"
     }
 
     private fun showFolderPickerDialog(folders: List<Pair<String, String>>) {

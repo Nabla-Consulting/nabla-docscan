@@ -4,8 +4,8 @@
 
     <!-- Actions -->
     <string name="action_scan">Scan Pages</string>
-    <string name="btn_scan">Scan Pages</string>
-    <string name="btn_add_pages">+ Add Pages</string>
+    <string name="btn_scan">Scan page</string>
+    <string name="btn_add_pages">Scan next page</string>
     <string name="btn_start_over">Start Over</string>
     <string name="action_start_over">Start Over</string>
     <string name="action_finished">Finished</string>

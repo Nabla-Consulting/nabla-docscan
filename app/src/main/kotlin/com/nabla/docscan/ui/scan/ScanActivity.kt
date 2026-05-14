@@ -90,15 +90,17 @@ class ScanActivity : AppCompatActivity() {
             viewModel.initializeMsal()
         }
 
-        // Auto-start scanner on launch
-        startDocumentScanner()
+        // Auto-start scanner on fresh launch only (not on rotation/recreate)
+        if (savedInstanceState == null) {
+            startDocumentScanner()
+        }
     }
 
     private fun setupScanner() {
         val options = GmsDocumentScannerOptions.Builder()
-            .setScannerMode(GmsDocumentScannerOptions.SCANNER_MODE_BASE_WITH_FILTER)  // was SCANNER_MODE_FULL
+            .setScannerMode(GmsDocumentScannerOptions.SCANNER_MODE_BASE)
             .setGalleryImportAllowed(false)   // Camera-only workflow
-            .setPageLimit(50)                  // Up to 50 pages per session
+            .setPageLimit(1)                   // 1 page per scan — we manage multi-page accumulation manually
             .setResultFormats(
                 GmsDocumentScannerOptions.RESULT_FORMAT_JPEG,
                 GmsDocumentScannerOptions.RESULT_FORMAT_PDF  // Get PDF directly from ML Kit
@@ -106,7 +108,7 @@ class ScanActivity : AppCompatActivity() {
             .build()
 
         documentScanner = GmsDocumentScanning.getClient(options)
-        Log.d(TAG, "ML Kit Document Scanner initialized (BASE_WITH_FILTER mode)")
+        Log.d(TAG, "ML Kit Document Scanner initialized (BASE_WITH_FILTER mode, pageLimit=1)")
     }
 
     private fun setupObservers() {
@@ -230,6 +232,7 @@ class ScanActivity : AppCompatActivity() {
             viewModel.resetSession()
             binding.etFileName.setText("")
             binding.tilFileName.visibility = View.GONE
+            startDocumentScanner()
         }
 
         binding.btnSettings.setOnClickListener {
@@ -254,26 +257,39 @@ class ScanActivity : AppCompatActivity() {
     }
 
     private fun handleScannerResult(result: ActivityResult) {
-        if (result.resultCode == RESULT_OK) {
-            val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+        when (result.resultCode) {
+            RESULT_OK -> {
+                val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                val pageUris = scanResult?.pages?.map { it.imageUri } ?: emptyList()
+                val pdfUri = scanResult?.pdf?.uri
 
-            if (scanResult == null) {
-                Log.w(TAG, "Scanner returned null result")
-                return
+                Log.d(TAG, "Scanner returned ${pageUris.size} pages, PDF: $pdfUri")
+
+                if (pageUris.isNotEmpty()) {
+                    viewModel.onScanComplete(pageUris, pdfUri)
+                    // Auto-relaunch scanner for next page — user taps cancel/back when done
+                    startDocumentScanner()
+                } else {
+                    Toast.makeText(this, R.string.error_no_pages_scanned, Toast.LENGTH_SHORT).show()
+                    // Relaunch scanner so user can try again
+                    startDocumentScanner()
+                }
             }
-
-            val pageUris = scanResult.pages?.map { it.imageUri } ?: emptyList()
-            val pdfUri = scanResult.pdf?.uri
-
-            Log.d(TAG, "Scanner returned ${pageUris.size} pages, PDF: $pdfUri")
-
-            if (pageUris.isNotEmpty() || pdfUri != null) {
-                viewModel.onScanComplete(pageUris, pdfUri)
-            } else {
-                Toast.makeText(this, R.string.error_no_pages_scanned, Toast.LENGTH_SHORT).show()
+            RESULT_CANCELED -> {
+                // User tapped back/cancel inside scanner = "I'm done scanning"
+                val pageCount = viewModel.scanSession.value?.pages?.size ?: 0
+                Log.d(TAG, "Scan cancelled by user, page count: $pageCount")
+                if (pageCount > 0) {
+                    // Navigate to ReviewActivity to review/confirm captured pages
+                    val pages = viewModel.scanSession.value?.pages ?: emptyList()
+                    val uriStrings = ArrayList(pages.map { it.imageUri.toString() })
+                    val intent = Intent(this, ReviewActivity::class.java).apply {
+                        putStringArrayListExtra(ReviewActivity.EXTRA_IMAGE_URIS, uriStrings)
+                    }
+                    reviewLauncher.launch(intent)
+                }
+                // If 0 pages: stay on ScanActivity (user cancelled before scanning anything)
             }
-        } else if (result.resultCode == RESULT_CANCELED) {
-            Log.d(TAG, "Scan cancelled by user")
         }
     }
 
